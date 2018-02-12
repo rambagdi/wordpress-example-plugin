@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Html Form to get dynamic response</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+	<div>
+		<button id="code1">first code</button>
+		<button id="code2">second code</button>
+		<button id="code3">third code</button>
+		<button id="code4">fourth code</button><br/>
+		<textarea id="tarea" cols="80" rows="10"></textarea><input type="hidden" name="code_no" id="code_no" value="" /><br/>
+		<button id="get-response">Get Response</button><br/><br/>
+		<h3>Response</h3>
+		<span id="response-span"></span>
+	</div>
+</body>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery("#code1").click(function(){
+			jQuery("#tarea").val("curl -X GET --header 'Accept: application/json' 'https://api.federalreporter.nih.gov/v1/Projects/search?query=piName%3ABRUCE%20TRAPNELL&offset=0&limit=50'");
+			jQuery("#code_no").val("code1");
+		});
+		jQuery("#code2").click(function(){
+			jQuery("#tarea").val("curl -X GET --header 'Accept: application/json' 'https://api.federalreporter.nih.gov/v1/Projects/search?query=orgName%3ANATIONAL%20INSTITUTES%20OF%20HEALTH&offset=0&limit=50'");
+			jQuery("#code_no").val("code2");
+		});
+		jQuery("#code3").click(function(){
+			jQuery("#tarea").val("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '[10086,10087,10088]' 'https://api.federalreporter.nih.gov/v1/Projects/FetchBySmApplIds'");
+			jQuery("#code_no").val("code3");
+		});
+		jQuery("#code4").click(function(){
+			jQuery("#tarea").val("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '  [\"5R21HL106121-02\",\"1228768\",\"1R01DC012517-01\"]' 'https://api.federalreporter.nih.gov/v1/Projects/FetchByProjectNumbers'");
+			jQuery("#code_no").val("code4");
+		});
+
+		jQuery('#get-response').click(function(){
+			var $_code_no = jQuery("#code_no").val();
+			var $_method = '';
+			var $_url = '';
+			var $_data = '';
+			if($_code_no=='code1'){
+				var $_method = 'GET';
+				var $_url = 'https://api.federalreporter.nih.gov/v1/Projects/search';
+				var $_data = {"query" : "piName:BRUCE TRAPNELL", "offset" : 0, "limit" : 50};
+			}else if($_code_no=='code2'){
+				var $_method = 'GET';
+				var $_url = 'https://api.federalreporter.nih.gov/v1/Projects/search';
+				var $_data = {"query" : "orgName:NATIONAL INSTITUTES OF HEALTH", "offset" : 0, "limit" : 50};
+			}
+			else if($_code_no=='code3'){
+				var $_method = 'POST';
+				var ids = [10086,10087,10088];
+				var $_url = 'https://api.federalreporter.nih.gov/v1/Projects/FetchBySmApplIds';
+				var $_data = {smApplIds : ids};
+			}
+			else if($_code_no=='code4'){
+				var $_method = 'POST';
+				var ids = ['5R21HL106121-02','1228768','1R01DC012517-01'];
+				var $_url = 'https://api.federalreporter.nih.gov/v1/Projects/FetchByProjectNumbers';
+				var $_data = {projectId : ids};
+			}
+			jQuery.ajax({
+			    url: $_url,
+			    dataType: 'JSONP',
+			    headers: { "Content-Type":"application/json","Accept": "application/json" },
+			    type: $_method,
+			    contentType: 'application/json',
+			    jsonp: "jsonp",
+			    jsonpCallback: 'callback',
+			    data: $_data,
+			    success: function (response) {
+					jQuery("#response-span").html(JSON.stringify(response));
+			    },
+			    error: function(response, errorThrown){
+			    	jQuery("#response-span").html(JSON.stringify(response));
+			    }
+			});
+			function callback(response){
+		      jQuery("#response-span").html(JSON.stringify(response));
+		    }
+		});
+	});
+</script>
+</html>
