@@ -24,8 +24,6 @@ add_shortcode('EXAMPLE','example'); // you can add this shortcode on pages or pl
 
 echo 'test';
 
-
-
-
+echo "Test";
 
 ?>
