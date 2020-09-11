@@ -22,7 +22,7 @@ function example(){
 /* shortcode which we can add on any page or widget */
 add_shortcode('EXAMPLE','example'); // you can add this shortcode on pages or plugin [EXAMPLE]
 
-echo "test";
+
 
 echo "Test";
 ?>
